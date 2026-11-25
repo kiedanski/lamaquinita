@@ -140,7 +140,7 @@ Create a full-page Notion database with exactly these properties:
 | Property | Type | Options |
 |---|---|---|
 | \`Name\` | Title | |
-| \`Status\` | Status | \`Backlog\`, \`To do\`, \`In progress\`, \`Review\`, \`Done\` |
+| \`Status\` | Status | \`Backlog\`, \`To do\`, \`In progress\`, \`Review\`, \`Done\`, \`Canceled\` |
 | \`Priority\` | Select | \`Urgent\`, \`High\`, \`Normal\`, \`Low\` |
 | \`PR\` | URL | |
 | \`Video\` | Files & media | |

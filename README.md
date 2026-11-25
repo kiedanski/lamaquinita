@@ -50,6 +50,9 @@ Claude Code), which picks a playbook for the work and verifies it; you can switc
 - **Approve**: approve the PR on GitHub, or tick `Auto-merge` on the card. The next pickup run
   merges it if checks are green, the current commit has been reviewed and nobody has requested
   changes; otherwise it writes one `Auto-merge waiting …` line saying why.
+- **Cancel**: move the card to `Canceled`. Nothing merges it from then on, an agent still
+  working it stops at its next push, and the next pickup run closes its open PR (the branch is
+  kept). Move it back to `To do` to revive it.
 - Dragging a card to `Done` merges nothing.
 - At most `maxInProgress` cards (default 5) are built at once.
 
