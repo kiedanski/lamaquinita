@@ -1,0 +1,13 @@
+{
+  "name": "lamaquinita",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A board-driven loop for coding agents: cards in, reviewed PRs with walkthrough videos out.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test && bash tests/install.test.sh && bash tests/deploy.test.sh"
+  }
+}

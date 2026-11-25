@@ -1,0 +1,39 @@
+{
+  "$comment": "Settings for the board loop. Fill in every REPLACE_ME value. Agents read this file at the start of every run.",
+
+  "board": {
+    "url": "https://www.notion.so/REPLACE_ME",
+    "dataSource": "collection://REPLACE_ME"
+  },
+
+  "repo": "REPLACE_ME_OWNER/REPLACE_ME_REPO",
+  "defaultBranch": "main",
+  "mergeMethod": "squash",
+
+  "maxInProgress": 5,
+  "claimWaitSeconds": 30,
+
+  "checks": {
+    "$comment": "Commands an agent runs before opening or updating a PR. Leave empty to rely on CI alone.",
+    "beforePush": ["npm test"]
+  },
+
+  "evidence": {
+    "$comment": "How a change is proven. See .claude/skills/walkthrough-evidence/SKILL.md.",
+    "required": true,
+    "startApp": "npm run dev",
+    "appUrl": "http://localhost:3000"
+  },
+
+  "stages": [
+    { "name": "main", "ref": "origin/main" },
+    { "name": "staging", "ref": "origin/staging" },
+    { "name": "production", "deployedShaCommand": "echo REPLACE_ME_command_that_prints_the_deployed_commit" }
+  ],
+
+  "incidents": {
+    "slackChannel": "#alerts",
+    "readOnlyCommands": [],
+    "$comment_readOnlyCommands": "Commands that read production state without changing it, e.g. a log query wrapper. Agents may run only these against production."
+  }
+}
