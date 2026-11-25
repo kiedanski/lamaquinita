@@ -16,7 +16,14 @@ case "$1 $2" in
   "sts get-caller-identity") echo '{}' ;;
   "configure get") echo us-east-1 ;;
   "lambda get-function") has function || exit 254 ;;
-  "lambda get-function-configuration") cat "$STATE/secret" 2>/dev/null || echo None ;;
+  "lambda get-function-configuration")
+    # Answers the one variable --query names, from the environment the last deploy stored.
+    var=""; for a in "$@"; do case "$a" in Environment.Variables.*) var="${a#Environment.Variables.}" ;; esac; done
+    python3 - "$STATE/env.json" "$var" <<'PY' 2>/dev/null || echo None
+import json, sys
+print(json.load(open(sys.argv[1]))["Variables"].get(sys.argv[2]) or "None")
+PY
+    ;;
   "iam get-role") has role || exit 254; echo arn:aws:iam::1:role/r ;;
   "iam create-role") touch "$STATE/role"; echo arn:aws:iam::1:role/r ;;
   "iam attach-role-policy") ;;
@@ -62,11 +69,24 @@ grep -q "sk-test" "$t/state/calls" && fail "token appears in aws arguments"
 grep -q "Check passed" <<<"$out" || fail "smoke check not reported"
 
 # Second run: updates, keeps the secret, tolerates existing permissions.
-echo "$secret" >"$t/state/secret"
 out="$(run 2>&1)" || fail "second run failed: $out"
 grep -q "Secret: unchanged" <<<"$out" || fail "secret should be kept"
 grep -q "\"BOARD_SECRET\":\"$secret\"" "$t/state/env.json" || fail "secret changed on update"
 grep -q "lambda update-function-code" "$t/state/calls" || fail "code not updated"
+
+# An update with nothing given asks for nothing and keeps the fire URL and the token.
+out="$(PATH="$t/bin:$PATH" STATE="$t/state" AWS_REGION=us-east-1 \
+  bash "$root/infra/board-webhook/deploy.sh" </dev/null 2>&1)" || fail "update without inputs failed: $out"
+grep -q "Keeping the stored fire URL and token" <<<"$out" || fail "did not say it kept them: $out"
+grep -q '"ROUTINE_TOKEN":"sk-test"' "$t/state/env.json" || fail "token lost on update"
+grep -q 'routines/trig_1/fire' "$t/state/env.json" || fail "fire URL lost on update"
+grep -q "\"BOARD_SECRET\":\"$secret\"" "$t/state/env.json" || fail "secret changed on update without inputs"
+grep -q "sk-test" <<<"$out" && fail "token printed"
+
+# A new token given on an update replaces the stored one.
+out="$(PATH="$t/bin:$PATH" STATE="$t/state" AWS_REGION=us-east-1 ROUTINE_TOKEN=sk-new \
+  bash "$root/infra/board-webhook/deploy.sh" </dev/null 2>&1)" || fail "token change failed: $out"
+grep -q '"ROUTINE_TOKEN":"sk-new"' "$t/state/env.json" || fail "token not replaced"
 
 # Bad fire URL is refused before touching AWS functions.
 if PATH="$t/bin:$PATH" STATE="$t/state" AWS_REGION=us-east-1 ROUTINE_FIRE_URL="https://evil.example/fire" \

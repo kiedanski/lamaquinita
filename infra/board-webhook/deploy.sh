@@ -4,7 +4,9 @@
 #
 #   bash infra/board-webhook/deploy.sh
 #
-# Asks for the routine's fire URL and token (or reads ROUTINE_FIRE_URL / ROUTINE_TOKEN).
+# First run: asks for the routine's fire URL and token (or reads ROUTINE_FIRE_URL /
+# ROUTINE_TOKEN). Later runs update the code and keep the stored fire URL, token and secret;
+# set ROUTINE_FIRE_URL or ROUTINE_TOKEN to change one.
 # Prints the webhook URL, and the shared secret when it is new.
 #
 # Optional environment:
@@ -30,7 +32,29 @@ REGION="${AWS_REGION:-$(aws configure get region || true)}"
 [ -n "$REGION" ] || die "no region: set AWS_REGION"
 export AWS_REGION="$REGION" AWS_PAGER=""
 
+exists=0
+aws lambda get-function --function-name "$FUNCTION_NAME" >/dev/null 2>&1 && exists=1
+
+# What the function already has, or nothing. Never printed.
+stored() {
+  [ "$exists" = 1 ] || return 0
+  local value
+  value="$(aws lambda get-function-configuration --function-name "$FUNCTION_NAME" \
+    --query "Environment.Variables.$1" --output text 2>/dev/null || true)"
+  [ "$value" = "None" ] || printf '%s' "$value"
+}
+
 # --- inputs -------------------------------------------------------------------------------
+kept=""
+if [ -z "${ROUTINE_FIRE_URL:-}" ]; then
+  ROUTINE_FIRE_URL="$(stored ROUTINE_FIRE_URL)"
+  [ -z "$ROUTINE_FIRE_URL" ] || kept="fire URL"
+fi
+if [ -z "${ROUTINE_TOKEN:-}" ]; then
+  ROUTINE_TOKEN="$(stored ROUTINE_TOKEN)"
+  [ -z "$ROUTINE_TOKEN" ] || kept="${kept:+$kept and }token"
+fi
+[ -z "$kept" ] || echo "Keeping the stored $kept (set ROUTINE_FIRE_URL / ROUTINE_TOKEN to change)."
 if [ -z "${ROUTINE_FIRE_URL:-}" ]; then
   read -r -p "Routine fire URL: " ROUTINE_FIRE_URL
 fi
@@ -44,15 +68,10 @@ if [ -z "${ROUTINE_TOKEN:-}" ]; then
 fi
 [ -n "$ROUTINE_TOKEN" ] || die "routine token is empty"
 
-exists=0
-aws lambda get-function --function-name "$FUNCTION_NAME" >/dev/null 2>&1 && exists=1
-
 new_secret=0
 BOARD_SECRET=""
-if [ "$exists" = 1 ] && [ "${ROTATE_SECRET:-0}" != 1 ]; then
-  BOARD_SECRET="$(aws lambda get-function-configuration --function-name "$FUNCTION_NAME" \
-    --query 'Environment.Variables.BOARD_SECRET' --output text 2>/dev/null || true)"
-  [ "$BOARD_SECRET" = "None" ] && BOARD_SECRET=""
+if [ "${ROTATE_SECRET:-0}" != 1 ]; then
+  BOARD_SECRET="$(stored BOARD_SECRET)"
 fi
 if [ -z "$BOARD_SECRET" ]; then
   BOARD_SECRET="$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')"
