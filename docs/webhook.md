@@ -40,7 +40,8 @@ bash infra/board-webhook/deploy.sh
 It asks for the fire URL and token, creates (or updates) a Lambda with a public function URL,
 checks that the URL refuses a wrong secret, and prints the webhook URL and the shared secret.
 The secret is printed only when it is created; `ROTATE_SECRET=1` makes a new one. Running it
-again updates the code and keeps the secret.
+again updates the code, asks for nothing, and keeps the stored fire URL, token and secret. To
+change one, give it: `ROUTINE_TOKEN=<new> bash infra/board-webhook/deploy.sh`.
 
 ## 3. Add the Notion automations
 
