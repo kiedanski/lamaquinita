@@ -51,6 +51,7 @@ Notion database automations need a paid Notion plan. On the board, add two autom
 |---|---|
 | `Status` is set to `To do` | Send webhook → the webhook URL, custom header `x-board-secret: <secret>` |
 | `Auto-merge` is checked | the same |
+| `Status` is set to `Canceled` (optional) | the same: the card's PR is closed at once instead of on the next scheduled run |
 
 Do not select any properties to send; the relay reads only the page's id. If a custom header is not
 possible in your setup, append `?key=<secret>` to the URL instead (less good: URLs end up in more

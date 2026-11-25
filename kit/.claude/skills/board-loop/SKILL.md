@@ -13,12 +13,13 @@ Settings live in `.agents/lamaquinita.json` (board URL, data source, repo, limit
 
 ## The board
 
-Columns (`Status`): `Backlog` → `To do` → `In progress` → `Review` → `Done`.
+Columns (`Status`): `Backlog` → `To do` → `In progress` → `Review` → `Done`, and `Canceled`,
+where only a person puts a card.
 
 | Field | Type | Who writes it |
 |---|---|---|
 | `Name` | title | person |
-| `Status` | status | person moves to `To do` and back; agent moves to `In progress` and `Review`; the merge step moves to `Done` |
+| `Status` | status | person moves to `To do` and back, and to `Canceled`; agent moves to `In progress` and `Review`; the merge step moves to `Done` |
 | `Priority` | select: `Urgent`, `High`, `Normal`, `Low` | person (incident routine sets `Urgent`) |
 | `PR` | URL | agent |
 | `Video` | files / URL | agent |
@@ -33,6 +34,10 @@ What each column means:
 - `In progress`: claimed. The `Session` link says by whom.
 - `Review`: PR open, evidence on the card, waiting for a person.
 - `Done`: merged. Dragging a card here by hand merges nothing.
+- `Canceled`: a person decided the work is not wanted. No agent moves a card here or out of
+  here. Nothing merges its PR, whatever `Auto-merge` says; the pickup routine closes its open
+  PR and keeps the branch. Before every push, re-read the card: if it is `Canceled`, push
+  nothing more and stop. A person revives the work by moving the card back to `To do`.
 
 ## Sections on a card
 

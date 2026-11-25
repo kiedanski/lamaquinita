@@ -45,6 +45,27 @@ For each such card, collect every reason not to merge:
 
 Never tick or untick `Auto-merge`.
 
+### Canceled cards
+
+In the same pass, for each card in `Canceled` that has a `PR` and no `Canceled <time>:` line
+under `## Log` yet:
+
+- The PR is open and its body's `Board card:` id is this card's → comment once,
+  `Canceled from the board card.`, close it, and add `Canceled <ISO time>: closed <PR URL>`
+  under `## Log`:
+
+  ```bash
+  gh api -X PATCH repos/$REPO/pulls/$N -f state=closed
+  ```
+
+- The PR is already closed → add the line, touch nothing else.
+- The PR is merged → add `Canceled <ISO time>: the PR had already merged; undoing it needs its
+  own card`.
+- The PR does not name this card → add `Canceled <ISO time>: PR not closed, it does not name
+  this card`.
+
+Delete no branch. Never move a card into or out of `Canceled`.
+
 ## 2. Claim `To do` cards
 
 1. `capacity = maxInProgress − (cards in In progress)`. If `capacity ≤ 0`, skip to step 4.

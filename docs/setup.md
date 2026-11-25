@@ -40,7 +40,7 @@ Create a Notion database (full-page) with these properties. The names must match
 | Property | Type | Options |
 |---|---|---|
 | `Name` | Title | |
-| `Status` | Status | `Backlog`, `To do`, `In progress`, `Review`, `Done` |
+| `Status` | Status | `Backlog`, `To do`, `In progress`, `Review`, `Done`, `Canceled` |
 | `Priority` | Select | `Urgent`, `High`, `Normal`, `Low` |
 | `PR` | URL | |
 | `Video` | Files & media | |
