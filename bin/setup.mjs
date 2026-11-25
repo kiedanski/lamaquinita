@@ -171,7 +171,7 @@ Repository \`${config.repo}\`, the environment above, connectors as listed.
 
 | Routine | Prompt | Connectors | Trigger |
 |---|---|---|---|
-| Board pickup | \`Read .agents/routines/board-pickup.md and follow it exactly.\` | Notion, GitHub | Schedule: hourly |
+| Board pickup | \`Read .agents/routines/board-pickup.md and follow it exactly. The card that started this run, if any, is named in the routine-fire-payload block.\` | Notion, GitHub | Schedule: hourly |
 | Board sync | \`Read .agents/routines/board-sync.md and follow it exactly.\` | Notion, GitHub | Schedule: a few times a day |
 ${config.incidents.slackChannel ? `| Incident response (optional) | \`Read .agents/routines/incident-response.md and follow it exactly.\` | Notion, GitHub, Slack (${config.incidents.slackChannel}) | API, from your monitoring tool |\n` : ''}
 ## 4. Connector permissions (claude.ai/customize/connectors)
@@ -198,7 +198,7 @@ The routines read the instructions from \`${config.defaultBranch}\`, so merge th
 3. In Notion, two automations on the board, each **Send webhook** to the printed URL with the
    custom header \`x-board-secret: <printed secret>\`: when \`Status\` is set to \`To do\`; when
    \`Auto-merge\` is checked.
-4. Slow the pickup's schedule to every 6 hours.
+4. Slow the pickup's schedule to every 2 hours.
 `;
 }
 

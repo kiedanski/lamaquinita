@@ -76,7 +76,7 @@ repository, a cloud environment that can run your project's checks, and the conn
 
 | Routine | Prompt | Connectors | Trigger |
 |---|---|---|---|
-| Board pickup | `Read .agents/routines/board-pickup.md and follow it exactly.` | Notion, GitHub | Schedule: hourly (every 6 hours once the webhook is set up) |
+| Board pickup | `Read .agents/routines/board-pickup.md and follow it exactly. The card that started this run, if any, is named in the routine-fire-payload block.` | Notion, GitHub | Schedule: hourly (every 2 hours once the webhook is set up) |
 | Board sync | `Read .agents/routines/board-sync.md and follow it exactly.` | Notion, GitHub | Schedule: a few times a day |
 | Incident response (optional) | `Read .agents/routines/incident-response.md and follow it exactly.` | Notion, GitHub, Slack | API, called by your monitoring tool for critical alerts only |
 
