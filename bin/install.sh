@@ -31,4 +31,5 @@ done < <(find "$kit" -type f -print0 | sort -z)
 
 echo
 echo "$copied copied, $skipped skipped."
-echo "Next: fill in $target/.agents/lamaquinita.json and add kit/CLAUDE.snippet.md to the project's CLAUDE.md."
+echo "Next: fill in $target/.agents/lamaquinita.json, add kit/CLAUDE.snippet.md to the project's CLAUDE.md,"
+echo "and enable pstack in .claude/settings.json. node bin/setup.mjs does all of this for you."

@@ -4,6 +4,9 @@
 
 - **The instructions live in the project repo**, not in the routine's prompt. The prompt only
   says which file to follow, so changing how agents work is a reviewed PR like any other change.
+- **poteto-mode for every card.** The board-loop skill asks for it explicitly rather than relying
+  on pstack's routing hook, and a session without pstack blocks the card instead of quietly
+  building it another way. `workflow.pstack: false` turns this off.
 - **A person merges.** The only ways to merge are a GitHub approval, a person saying "merge" in a
   session, or a person ticking `Auto-merge`. Agents never tick it.
 - **Card ids, not URLs.** Notion links one page by several URL forms; PRs are matched to cards by
@@ -32,6 +35,10 @@ Stated plainly so nobody relies on these by accident:
 - The claim protocol is instructions for agents; it has not been exercised by real simultaneous
   runs.
 - `record-walkthrough.mjs` is tested with a fake page object, not with a real browser.
+- Installing pstack in cloud sessions: through `.claude/settings.json` (`extraKnownMarketplaces`
+  / `enabledPlugins`) and through `cloud-setup.sh` (`claude plugin marketplace add` /
+  `claude plugin install`). Neither has been checked in a real cloud environment yet; the
+  board-loop skill blocks the card if poteto-mode is missing, so a failure is visible.
 - Nothing has run end to end (card → routine → PR → auto-merge → sync).
 
 ## Known limits

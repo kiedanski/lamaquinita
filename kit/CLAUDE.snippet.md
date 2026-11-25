@@ -5,6 +5,13 @@
 Work comes from the Notion board described in `.agents/lamaquinita.json`. Before touching a card,
 read `.claude/skills/board-loop/SKILL.md`.
 
+### How to work
+
+Every change is worked in **poteto-mode** from the pstack plugin (enabled in
+`.claude/settings.json`). Before the first change in a session, load the `poteto-mode` skill and
+let it pick the playbook. In cloud sessions use `gh api …` (REST) for PR work; pstack's GraphQL
+helpers are refused there.
+
 ### Finishing a change
 
 A change is finished when all of these hold:

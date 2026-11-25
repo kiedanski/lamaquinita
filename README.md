@@ -17,19 +17,23 @@ walkthrough video, and wait for a person to approve the merge.
 
 It runs on [Claude Code routines](https://code.claude.com/docs/en/routines): a scheduled (and
 optionally webhook-fired) routine picks cards up, and the instructions it follows live in your
-repository as plain Markdown.
+repository as plain Markdown. Each card is built in **poteto-mode** from
+[pstack](https://github.com/michael-denyer/pstack-claude) (Lauren Tan's skill stack, ported to
+Claude Code), which picks a playbook for the work and verifies it; you can switch that off.
 
 ## What's here
 
 | Path | What it is |
 |---|---|
-| `kit/` | Files you copy into your project (`bin/install.sh` does it) |
+| `bin/setup.mjs` | Guided setup: copies the kit, asks for your settings, enables pstack, prints what's left |
+| `kit/` | Files that go into your project (`bin/install.sh` copies them without asking anything) |
 | `kit/.claude/skills/board-loop/SKILL.md` | How an agent works a card: claim, build, evidence, PR, rework |
 | `kit/.claude/skills/walkthrough-evidence/SKILL.md` | What proof a card needs before `Review`, and how to record it |
 | `kit/.agents/routines/board-pickup.md` | Routine: merge approved cards, claim and build `To do` cards |
 | `kit/.agents/routines/board-sync.md` | Routine: move merged cards to `Done`, fill `Reached` |
 | `kit/.agents/routines/incident-response.md` | Routine: critical alert → urgent card with findings → Slack |
 | `kit/.agents/lamaquinita.json` | The settings the agents read (board, repo, limits, stages) |
+| `kit/.agents/cloud-setup.sh` | Setup script for the cloud environment (installs pstack, Playwright) |
 | `kit/scripts/record-walkthrough.mjs` | Records a video of a web app from a JSON list of steps (Playwright) |
 | `kit/scripts/pr-stage.js` | Tells which deployment stages a merged PR has reached |
 | `kit/CLAUDE.snippet.md` | The rules to paste into your project's `CLAUDE.md` |
@@ -51,14 +55,15 @@ repository as plain Markdown.
 
 ## Setting it up
 
-See [docs/setup.md](docs/setup.md). In short:
+```bash
+git clone https://github.com/kiedanski/lamaquinita
+node lamaquinita/bin/setup.mjs /path/to/your/project
+```
 
-1. `bash bin/install.sh /path/to/your/project`, then fill in `.agents/lamaquinita.json`.
-2. Create the Notion board with the fields in the board-loop skill.
-3. Create the pickup routine (and optionally sync and incident routines) at
-   [claude.ai/code/routines](https://claude.ai/code/routines).
-4. Optionally deploy the webhook relay ([docs/webhook.md](docs/webhook.md)) so cards are picked
-   up within seconds instead of on the next scheduled run.
+It copies the kit, asks for your settings (repo, board, checks, stages…), enables pstack,
+updates `CLAUDE.md` and `.gitignore`, can commit it all on a branch, and then prints the steps
+that need a browser (Notion board, cloud environment, routines, connectors, optional webhook),
+filled in with your values. Details: [docs/setup.md](docs/setup.md).
 
 ## Rules the agents keep
 

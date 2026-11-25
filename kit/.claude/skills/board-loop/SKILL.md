@@ -64,6 +64,15 @@ last 32 hex characters of the URL (dashes removed), lowercase. Every PR body car
 4. **Build.** Follow the project's `CLAUDE.md`. Keep the change to what the card asks. If the card
    is ambiguous in a way that changes what you would build, write the question under
    `## Blocked`, move the card to `Backlog`, stop.
+   - If `workflow.pstack` is `true` in the config, work the card in **poteto-mode**: invoke the
+     pstack `poteto-mode` skill with the card's title and body as the goal (start with
+     `new task.`), and follow the playbook it picks, including its own verification and review
+     steps. Steps 5–9 below still apply on top of it.
+   - If `workflow.pstack` is `true` and the `poteto-mode` skill is not available in this
+     session, do not build without it: write `pstack is not installed in this environment` under
+     `## Blocked`, move the card back to `To do`, stop. (See `docs/setup.md` in lamaquinita.)
+   - pstack's `watch-pr` and `ship-pr` use GraphQL, which cloud sessions refuse. Use the REST
+     API (`gh api repos/<owner>/<repo>/pulls/<n>`) for PR work instead.
 5. **Check.** Run every command in `checks.beforePush`. Fix failures before going on.
 6. **Prove it.** Follow `.claude/skills/walkthrough-evidence/SKILL.md`. Put the result in the
    card's `Video` field.
