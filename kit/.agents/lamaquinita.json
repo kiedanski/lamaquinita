@@ -10,6 +10,11 @@
   "defaultBranch": "main",
   "mergeMethod": "squash",
 
+  "workflow": {
+    "$comment": "pstack: build every card in poteto-mode (pstack plugin). If the plugin is missing in a session, the card is blocked instead of built without it.",
+    "pstack": true
+  },
+
   "maxInProgress": 5,
   "claimWaitSeconds": 30,
 
